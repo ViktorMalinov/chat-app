@@ -1,20 +1,34 @@
 import { Icon } from '@rsuite/icons';
 import React from 'react';
-import firebase from 'firebase/app';
+import {
+  signInWithPopup,
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+} from 'firebase/auth';
 import { Button, Col, Container, Grid, Panel, Row } from 'rsuite';
-import { auth } from '../misc/firebase';
+import { auth, database } from '../misc/firebase';
+
+// import 'firebase/auth';
 
 const SignIn = () => {
-  const signInWithProvider = provider => {
-    auth.signInWithProvider(provider);
+  const signInWithProvider = async provider => {
+    try {
+      const { providerId } = await signInWithPopup(auth, provider);
+
+      console.log(providerId);
+
+      alert('Signrd in');
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
-  // const onFacebookSignIn = () => {
-  //   signInWithProvider(new firebase());
-  // };
-  // const onGoogleSignIn = () => {
-  //   signInWithProvider();
-  // };
+  const onFacebookSignIn = () => {
+    signInWithProvider(new FacebookAuthProvider());
+  };
+  const onGoogleSignIn = () => {
+    signInWithProvider(new GoogleAuthProvider());
+  };
 
   return (
     <Container>
@@ -28,10 +42,20 @@ const SignIn = () => {
               </div>
 
               <div className="mt-3">
-                <Button block color="blue" appearance="primary">
+                <Button
+                  block
+                  color="blue"
+                  appearance="primary"
+                  onClick={onFacebookSignIn}
+                >
                   <Icon /> Continue with Facebook
                 </Button>
-                <Button block color="green" appearance="primary">
+                <Button
+                  block
+                  color="green"
+                  appearance="primary"
+                  onClick={onGoogleSignIn}
+                >
                   <Icon /> Continue with Google
                 </Button>
               </div>
